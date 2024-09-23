@@ -1,12 +1,13 @@
 {
   "name": "@tettekete/result",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/result.js",
   "scripts": {
     "test": "jest",
     "build": "rm -rf dist && webpack build --mode production",
     "dev": "npm run build; node dist/index.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prepack": "npm run build"
   },
   "files": [
     "dist"
