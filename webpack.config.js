@@ -11,7 +11,7 @@ module.exports = (env, argv) => (
 		filename: 'result.js',
 		path: path.resolve(__dirname, 'dist'),
 		library: {
-			name: ['tettekete','Result'],
+			// name: 'Result',
 			type: 'commonjs2',
 		}
 	},
@@ -22,10 +22,7 @@ module.exports = (env, argv) => (
 			{
 				test: /\.ts$/,
 				use: {
-					loader: 'ts-loader',
-					options: {
-						transpileOnly: true
-					}
+					loader: 'ts-loader'
 				},
 				exclude: /node_modules/
 			}
