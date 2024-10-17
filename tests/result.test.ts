@@ -1,5 +1,4 @@
 import {describe, expect, test} from '@jest/globals';
-// import { assert } from "chai";
 import Result from '../src/result';
 
 
@@ -47,13 +46,13 @@ describe('Throws an exception when assigning to a ReadOnly member.',()=>
 
 let index = 0;
 describe.each([
-	{f: ()=>{return Result.success()}						,b: true	,m: "success" ,o: null },
+	{f: ()=>{return Result.success()}						,b: true	,m: "success" ,o: undefined },
 	{f: ()=>{return Result.success("OK")}					,b: true	,m:"OK" ,o: "OK" },
 	{f: ()=>{return Result.success("OK",{foo: "bar"})}		,b: true	,m:"OK" ,o: {foo: "bar"}},
 	{f: ()=>{return Result.success(undefined,{foo: "bar"})}	,b: true	,m:"success" ,o: {foo: "bar"}},
 	{f: ()=>{return Result.success(null,{foo: "bar"})}		,b: true	,m:"success" ,o: {foo: "bar"}},
 	{f: ()=>{return Result.success({foo: "bar"})}			,b: true	,m:"success" ,o: {foo: "bar"}},
-	{f: ()=>{return Result.failure()}						,b: false	,m:"failure" ,o: null},
+	{f: ()=>{return Result.failure()}						,b: false	,m:"failure" ,o: undefined},
 	{f: ()=>{return Result.failure("NG")}					,b: false	,m:"NG" ,o: "NG"},
 	{f: ()=>{return Result.failure("NG",{foo: "bar"})}		,b: false	,m:"NG" ,o: {foo: "bar"}},
 	{f: ()=>{return Result.failure(undefined,{foo: "bar"})}	,b: false	,m:"failure" ,o: {foo: "bar"}},
@@ -69,7 +68,7 @@ describe.each([
 	});
 	
 	const r = f();
-	test(`ブール評価が ${b} である`,()=>
+	test(`${index}:ブール評価が ${b} である`,()=>
 	{
 		if( b )
 		{
@@ -83,12 +82,12 @@ describe.each([
 		}
 	});
 	
-	test(`message が "${m}" である`,()=>
+	test(`${index}:message が "${m}" である`,()=>
 	{
 		expect( r.message ).toBe( m );
 	});
 	
-	test('data が期待値通りである',()=>
+	test(`${index}:data が期待値通りである`,()=>
 	{
 		expect( JSON.stringify(r.data) ).toEqual( JSON.stringify( o ) );
 		// assert.deepEqual( r.data , o );

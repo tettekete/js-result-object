@@ -5,72 +5,75 @@ interface Result_IF {
 	message?: string | null | undefined;
 };
 
+
+export type ResultMakerArgsT = [messageOrData?: unknown, data?: unknown];
+
 /**
- * Rresult クラス
- * 
- * ok メンバや ng メンバを参照するとするとのその成否が分かり、
- * message や data メンバ経由でエラーメッセージや成功データ
- * （あるいは失敗データ）を取得できる様にするためのコンテナクラス。
- * 
- * @example
- * let r = Result.success();
- * // r.ok === true
- * // r.ng === false
- * // r.message === "success"
- * // r.data === null
- * 
- * let r2 = Result.failure( {foo: {bar : "buzz"}} );
- * // r2.ok === false
- * // r2.ng === true
- * // r2.message === "failure"
- * // r2.data === {foo: {bar : "buzz"}}
- * 
- * let r3 = Result.success( "You can fly!" ,{foo: {bar : "buzz"}} );
- * // r3.ok === true
- * // r3.ng === false
- * // r3.message === "You can fly!"
- * // r3.data === {foo: {bar : "buzz"}}
- * 
- */
+* Result Class
+* 
+* A class of objects representing simple “results”.
+* Result objects can hold messages and data associated with “results”.
+* 
+* @example
+* let r = Result.success();
+* // r.ok === true
+* // r.ng === false
+* // r.message === "success"
+* // r.data === undefined
+* 
+* let r2 = Result.failure( {foo: {bar : "buzz"}} );
+* // r2.ok === false
+* // r2.ng === true
+* // r2.message === "failure"
+* // r2.data === {foo: {bar : "buzz"}}
+* 
+* let r3 = Result.success( "You can fly!" ,{foo: {bar : "buzz"}} );
+* // r3.ok === true
+* // r3.ng === false
+* // r3.message === "You can fly!"
+* // r3.data === {foo: {bar : "buzz"}}
+* 
+*/
 
 export default class Result
 {
 	private readonly _ok: boolean;
 	private readonly _data: unknown;
 	private readonly _message: string | null | undefined;
-
+	
 	get ok()		{ return this._ok }
 	get ng()		{ return ! this._ok }
 	get data()		{ return this._data }
 	get message()	{ return this._message }
-
+	
 	/**
-	 * コンストラクタ
-	 * @private
-	 * @param {Result_IF} args - コンストラクタ引き数オブジェクト
-	 * @param {boolean} args.success - 本オブジェクトの成否を表す bool 値
-	 * @param {string} [args.message] - 結果に関するメッセージ (任意)
-	 * @param {any} [args.data] - 結果データ (任意)
-	 */
-    private constructor({
+	* Constructor.
+	* 
+	* However, it cannot be called directly. 
+	* Use Result.success() or Result.failure() instead.
+	* 
+	* @private
+	* @param {Result_IF} args - Constructor argument object
+	* @param {any} [args.data] - Result data (optional)
+	* @param {string} [args.message] - Result message (optional)
+	* @param {boolean} args.success - boolean value indicating success or failure of this object (required)
+	*/
+	private constructor({
 		data
 		,message
 		,success
 	}:Result_IF )
 	{
-		if( typeof data !== 'undefined' )
-		{
-			this._data		= data;	
-		}
-
+		this._data = data;
+		
 		if( typeof message !== 'undefined' )
 		{
 			this._message		= message;	
 		}
-        
-        this._ok	= success;
-    }
-
+		
+		this._ok	= success;
+	}
+	
 	private static _arg_parser(
 		success: boolean,
 		messageOrData?: unknown,
@@ -82,12 +85,12 @@ export default class Result
 			success: success,
 			message: success ? 'success' : 'failure'
 		};
-
+		
 		if( typeof messageOrData === 'string')
-		{
+			{
 			/* construct pattern:
-				( textMessage )
-				( textMessage , dataObject )
+			( textMessage )
+			( textMessage , dataObject )
 			*/
 			r.message	= messageOrData;
 			r.data		= data ?? messageOrData;
@@ -95,33 +98,40 @@ export default class Result
 		else
 		{
 			/* construct pattern:
-				()
-				( dataObject )
-				( undefined ,dataObject )
-				( null ,dataObject )
+			()
+			( dataObject )
+			( undefined ,dataObject )
+			( null ,dataObject )
 			*/
-			r.data		= messageOrData ?? data ?? null;
+			if( typeof data === 'undefined' )
+			{
+				r.data	= messageOrData;
+			}
+			else
+			{
+				r.data	= messageOrData ?? data;
+			}
 		}
-
+		
 		return r;
 	}
-
-    static success(
-		messageOrData?: unknown
-		,data?: unknown
+	
+	static success(
+		...args: ResultMakerArgsT
 	): Result
 	{
+		const [messageOrData, data] = args;
 		return new Result( Result._arg_parser( true ,messageOrData,data ) );
-    }
-
-    static failure(
-		messageOrData?: unknown
-		,data?: unknown
+	}
+	
+	static failure(
+		...args: ResultMakerArgsT
 	): Result
 	{
+		const [messageOrData, data] = args;
 		return new Result( Result._arg_parser( false ,messageOrData,data ) );
-    }
-
+	}
+	
 	error(): Error
 	{
 		const e = Error( this.message ?? 'Error' );
