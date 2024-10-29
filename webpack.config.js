@@ -12,7 +12,7 @@ module.exports = (env, argv) => (
 		path: path.resolve(__dirname, 'dist'),
 		library: {
 			// name: 'Result',
-			type: 'commonjs2',
+			type: 'umd',
 		}
 	},
 
