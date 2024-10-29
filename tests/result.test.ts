@@ -50,13 +50,17 @@ describe.each([
 	{f: ()=>{return Result.success("OK")}					,b: true	,m:"OK" ,o: "OK" },
 	{f: ()=>{return Result.success("OK",{foo: "bar"})}		,b: true	,m:"OK" ,o: {foo: "bar"}},
 	{f: ()=>{return Result.success(undefined,{foo: "bar"})}	,b: true	,m:"success" ,o: {foo: "bar"}},
+	{f: ()=>{return Result.success(undefined)}				,b: true	,m:"success" ,o: undefined },
 	{f: ()=>{return Result.success(null,{foo: "bar"})}		,b: true	,m:"success" ,o: {foo: "bar"}},
+	{f: ()=>{return Result.success(null)}					,b: true	,m:"success" ,o: null},
 	{f: ()=>{return Result.success({foo: "bar"})}			,b: true	,m:"success" ,o: {foo: "bar"}},
 	{f: ()=>{return Result.failure()}						,b: false	,m:"failure" ,o: undefined},
 	{f: ()=>{return Result.failure("NG")}					,b: false	,m:"NG" ,o: "NG"},
 	{f: ()=>{return Result.failure("NG",{foo: "bar"})}		,b: false	,m:"NG" ,o: {foo: "bar"}},
 	{f: ()=>{return Result.failure(undefined,{foo: "bar"})}	,b: false	,m:"failure" ,o: {foo: "bar"}},
+	{f: ()=>{return Result.failure(undefined)}				,b: false	,m:"failure" ,o: undefined},
 	{f: ()=>{return Result.failure(null,{foo: "bar"})}		,b: false	,m:"failure" ,o: {foo: "bar"}},
+	{f: ()=>{return Result.failure(null)}					,b: false	,m:"failure" ,o: null},
 	{f: ()=>{return Result.failure({foo: "bar"})}			,b: false	,m:"failure" ,o: {foo: "bar"}},
 
 ])('All construct patterns',({f,b,m,o}) =>
