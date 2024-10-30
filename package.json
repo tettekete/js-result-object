@@ -1,17 +1,21 @@
 {
   "name": "@tettekete/result",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/result.js",
   "scripts": {
     "test": "jest",
     "build": "rm -rf dist && webpack build --mode production",
+    "build-dev": "rm -rf dist && webpack build --mode development",
     "dev": "npm run build; node dist/index.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prepack": "npm run build"
   },
   "files": [
     "dist"
   ],
-  "keywords": ["object"],
+  "keywords": [
+    "object"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/tettekete/js-result-object.git"

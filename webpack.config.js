@@ -1,15 +1,19 @@
 const path = require('path');
 
-module.exports =
+module.exports = (env, argv) => (
 {
-	entry: './src/index.ts',
+	entry: './src/result.ts',
 	target: 'node',	// or 'web'
-	mode: 'none',	// or 'development' or 'production'
+	mode: argv.mode || 'none',	// or 'development' or 'production'
 	// 書き出し先設定
 	output:
 	{
-		filename: 'index.js',
-		path: path.resolve(__dirname, 'dist')
+		filename: 'result.js',
+		path: path.resolve(__dirname, 'dist'),
+		library: {
+			// name: 'Result',
+			type: 'commonjs2',
+		}
 	},
 
 	// TypeScript のローダー設定
@@ -17,11 +21,15 @@ module.exports =
     	rules:[
 			{
 				test: /\.ts$/,
-				use: 'ts-loader',
+				use: {
+					loader: 'ts-loader'
+				},
 				exclude: /node_modules/
 			}
 		]
 	},
+
+	// stats: 'verbose',
 
 	// 拡張子なしの import 文の拡張子解決順指定
 	resolve:
@@ -30,7 +38,7 @@ module.exports =
 	},
 
 	// ソースマップは開発中のみ有効化
-  	devtool: 'source-map',
+	devtool: argv.mode === 'development' ? 'source-map' : false,
 
 	// target: node の場合、これらはバンドルしない（node で提供されているため）
 	externals: {
@@ -43,4 +51,4 @@ module.exports =
 		__dirname: false,
 		__filename: false,
 	},
-}
+});
