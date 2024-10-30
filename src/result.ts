@@ -54,8 +54,8 @@ export default class Result
 	* 
 	* @private
 	* @param {Result_IF} args - Constructor argument object
-	* @param {any} [args.data] - Result data (optional)
-	* @param {string} [args.message] - Result message (optional)
+	* @param {unknown} [args.data] - Result data (optional)
+	* @param {string | null | undefined} [args.message] - Result message (optional)
 	* @param {boolean} args.success - boolean value indicating success or failure of this object (required)
 	*/
 	private constructor({
