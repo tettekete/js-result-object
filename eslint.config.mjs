@@ -29,6 +29,8 @@ const _base_rules = {
 	...tseslint.configs.recommended.rules,
 	'no-unused-vars': 'off',					// off because it is covered by typescript type checking
 	'@typescript-eslint/no-unused-vars': 'off',	// ditto
+	'no-dupe-class-members': 'off',			// overload methods are allowed in TypeScript
+	'@typescript-eslint/no-dupe-class-members': 'error', // correct 'no-dupe-class-members' setting in TypeScript
 };
 
 
