@@ -1,6 +1,6 @@
 
-interface Result_IF {
-	data?: unknown;
+interface Result_IF<T> {
+	data?: T;
 	success: boolean;
 	message?: string | null | undefined;
 };
@@ -35,10 +35,10 @@ export type ResultMakerArgsT = [messageOrData?: unknown, data?: unknown];
 * 
 */
 
-export default class Result
+export default class Result<T = unknown>
 {
 	private readonly _ok: boolean;
-	private readonly _data: unknown;
+	private readonly _data: T | undefined | null;
 	private readonly _message: string | null | undefined;
 	
 	get ok()		{ return this._ok }
@@ -62,7 +62,7 @@ export default class Result
 		data
 		,message
 		,success
-	}:Result_IF )
+	}:Result_IF<T> )
 	{
 		this._data = data;
 		
@@ -74,62 +74,78 @@ export default class Result
 		this._ok	= success;
 	}
 	
-	private static _arg_parser(
+	private static _arg_parser<T>(
 		success: boolean,
-		messageOrData?: unknown,
-		data?: unknown
-	): Result_IF
+		messageOrData?: string | T,
+		data?: T
+	): Result_IF<T>
 	{
-		const r: Result_IF =
+		const rArgs: Result_IF<T> =
 		{
 			success: success,
 			message: success ? 'success' : 'failure'
 		};
 		
-		if( typeof messageOrData === 'string')
-			{
-			/* construct pattern:
-			( textMessage )
-			( textMessage , dataObject )
-			*/
-			r.message	= messageOrData;
-			r.data		= data ?? messageOrData;
-		}
-		else
+		if( messageOrData === undefined && data === undefined )
 		{
-			/* construct pattern:
-			()
-			( dataObject )
-			( undefined ,dataObject )
-			( null ,dataObject )
-			*/
-			if( typeof data === 'undefined' )
+			/* construct pattern: () */
+			rArgs.data = undefined as undefined;
+		}
+		else if( typeof messageOrData === 'string' )
+		{
+			rArgs.message	= messageOrData as string;
+
+			if( data === undefined )
 			{
-				r.data	= messageOrData;
+				/* construct pattern: ( textMessage ) */
+				rArgs.data		= messageOrData as T;
 			}
 			else
 			{
-				r.data	= messageOrData ?? data;
+				/* construct pattern: ( textMessage , dataObject ) */
+				rArgs.data		= data as T;
+			}
+		}
+		else
+		{
+			if( data === undefined )
+			{
+				/* construct pattern(that 1 arg):
+					( undefined | null )
+					( dataObject )
+				*/
+				rArgs.data		= messageOrData as T;
+			}
+			else
+			{
+				/* construct pattern: ( undefined | null , undefined  ) */
+				rArgs.data		= data as T;
 			}
 		}
 		
-		return r;
+		return rArgs;
 	}
 	
-	static success(
-		...args: ResultMakerArgsT
-	): Result
+	static success(): Result<undefined>;
+	static success(message: string): Result<string>;
+	static success<T>(data: T): Result<T>;
+	static success<T>(message: string, data: T): Result<T>;
+	static success<T>(message: undefined | null, data: T): Result<T>;
+	static success<T>(message: unknown, data: unknown ): Result<T>;
+	static success<T>(messageOrData?: string | T, data?: T): Result<T>
 	{
-		const [messageOrData, data] = args;
-		return new Result( Result._arg_parser( true ,messageOrData,data ) );
+		return new Result( Result._arg_parser<T>( true ,messageOrData,data ) );
 	}
 	
-	static failure(
-		...args: ResultMakerArgsT
-	): Result
+	static failure(): Result<undefined>;
+	static failure(message: string): Result<string>;
+	static failure<T>(data: T): Result<T>;
+	static failure<T>(message: string, data: T): Result<T>;
+	static failure<T>(message: undefined | null, data: T): Result<T>;
+	static failure<T>(message: unknown, data: unknown ): Result<T>;
+	static failure<T>(messageOrData?: string | T, data?: T): Result<T>
 	{
-		const [messageOrData, data] = args;
-		return new Result( Result._arg_parser( false ,messageOrData,data ) );
+		return new Result( Result._arg_parser<T>( false ,messageOrData,data ) );
 	}
 	
 	error(): Error
