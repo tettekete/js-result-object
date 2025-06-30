@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import Result from '../src/result';
+import Result from '../../src/result';
 
 
 describe.each([
