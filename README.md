@@ -28,6 +28,26 @@ const r3 = Result.success( "You can fly!" ,{foo: {bar : "buzz"}} );
 // r3.ng === false
 // r3.message === "You can fly!"
 // r3.data === {foo: {bar : "buzz"}}
+
+// - - - - - - - -
+// **Generics support(since version 1.1.0)**
+type TokenSet = {
+	idToken: string;
+	refreshToken: string;
+};
+
+const r4 = Result.success<TokenSet>({idToken:"abc", refreshToken:"def"});
+if( r4.data != null )
+{
+	// If the .data property is neither undefined nor null,
+	// it is guaranteed to be of type "TokenSet".
+	// Therefore, you can access "idToken" without any TypeScript warnings.
+	console.log(`idToken: {r4.data.idToken}`);	// idToken: abc
+
+	// Of course, you can also access it as `r4.data?.idToken`, or prepare
+	// a type guard function for "TokenSet" to determine the type before
+	// accessing it.
+}
 ```
 
 # Result
@@ -57,7 +77,7 @@ The following is a list of argument combinations and the data patterns returned 
 
 
 
-### `faulure( [messageOrData [, data ]] )`
+### `failure( [messageOrData [, data ]] )`
 
 Creates a `Result` instance that indicates failure.
 
