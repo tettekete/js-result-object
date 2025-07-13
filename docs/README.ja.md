@@ -1,4 +1,6 @@
 
+<p align="center"><a href="https://www.npmjs.com/package/@tettekete/result">English</a> / 日本語</p>
+
 # @tettekete/result
 
 `@tettekete/result` は、シンプルな「結果」を表すオブジェクトのためのクラスを提供します。

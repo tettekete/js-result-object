@@ -1,6 +1,6 @@
 {
   "name": "@tettekete/result",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "dist/result.js",
   "scripts": {
     "test": "jest",
@@ -8,7 +8,8 @@
     "build-dev": "rm -rf dist && webpack build --mode development",
     "dev": "npm run build; node dist/index.js",
     "lint": "eslint",
-    "prepack": "npm run build",
+    "prepack": "npm run build && rm README.md && cp -f ./docs/README.md README.md",
+    "postpack": "git checkout README.md",
     "link": "npm run build && npm link"
   },
   "files": [
