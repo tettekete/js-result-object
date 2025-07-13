@@ -1,7 +1,7 @@
 
 # @tettekete/result
 
-`@tettekete/result` is a class of objects representing simple “results”.
+`@tettekete/result` provides a class that represents simple "results".
 
 # USAGE
 
@@ -21,32 +21,57 @@ const r2 = Result.failure( {foo: {bar : "buzz"}} );
 // r2.ok === false
 // r2.ng === true
 // r2.message === "failure"
-// r2.data === {foo: {bar : "buzz"}}
+// r2.data === { foo: { bar: "buzz" } }
 
-const r3 = Result.success( "You can fly!" ,{foo: {bar : "buzz"}} );
+const r3 = Result.success("You can fly!", { foo: { bar: "buzz" } });
 // r3.ok === true
 // r3.ng === false
 // r3.message === "You can fly!"
 // r3.data === {foo: {bar : "buzz"}}
 
 // - - - - - - - -
-// **Generics support(since version 1.1.0)**
+// Generics support (since version 1.1.0)
 type TokenSet = {
-	idToken: string;
-	refreshToken: string;
+  idToken: string;
+  refreshToken: string;
 };
 
-const r4 = Result.success<TokenSet>({idToken:"abc", refreshToken:"def"});
-if( r4.data != null )
-{
-	// If the .data property is neither undefined nor null,
-	// it is guaranteed to be of type "TokenSet".
-	// Therefore, you can access "idToken" without any TypeScript warnings.
-	console.log(`idToken: {r4.data.idToken}`);	// idToken: abc
+// You can use generics to specify the type of data stored in the `data` property.
+const r4 = Result.success<TokenSet>({ idToken: "abc", refreshToken: "def" });
 
-	// Of course, you can also access it as `r4.data?.idToken`, or prepare
-	// a type guard function for "TokenSet" to determine the type before
-	// accessing it.
+// Since the generic type `TokenSet` is specified,
+// TypeScript infers that `r4.data` is of type `TokenSet`,
+// so you can access its properties without any type errors or warnings.
+
+console.log(`idToken: {r4.data.idToken}`); // idToken: abc
+
+// If you want to guard against human error,
+// you can use a type guard function to verify that the value is a `TokenSet`,
+// and explicitly inform TypeScript before accessing its properties for added safety.
+
+// - - - - - - - -
+// Since version 1.2.0, discriminated union-like usage is supported.
+function resultMaker(
+  which: "success" | "failure"
+): Result<
+  { prop1: string; prop2: string }, // <-- data type for success
+  { message: "failure" }            // <-- data type for failure
+> {
+  if (which === "success") {
+    return Result.success({ prop1: "prop1", prop2: "prop2" });
+  } else {
+    return Result.failure({ message: "failure" });
+  }
+}
+
+const successResult = resultMaker("success");
+if (Result.isSuccess(successResult)) {
+  console.log(successResult.data.prop1); // Access "prop1" without TypeScript warnings
+}
+
+const failureResult = resultMaker("failure");
+if (Result.isFailure(failureResult)) {
+  console.log(failureResult.data.message); // Access "message" without TypeScript warnings
 }
 ```
 
@@ -56,13 +81,13 @@ if( r4.data != null )
 
 ### `new` is private
 
-You cannot directly instantiate it with `new`. Instead, use the class methods `success()` or `failure()`.
+You cannot instantiate this class directly using `new`. Instead, use the static methods `success()` or `failure()`.
 
-### `success( [messageOrData [, data ]] )`
+### `success<T>( [messageOrData [, data ]] )`
 
-Creates a `Result` instance that indicates success.
+Creates a `Result` instance indicating success.
 
-The following is a list of argument combinations and the data patterns returned by each accessor.
+The table below shows combinations of arguments and how each accessor behaves:
 
 | messageOrData  | data           | .ok     | .ng     | .message  | .data          |
 | -------------- | -------------- | ------- | ------- | --------- | -------------- |
@@ -77,11 +102,11 @@ The following is a list of argument combinations and the data patterns returned 
 
 
 
-### `failure( [messageOrData [, data ]] )`
+### `failure<E>( [messageOrData [, data ]] )`
 
-Creates a `Result` instance that indicates failure.
+Creates a `Result` instance indicating failure.
 
-The following is a list of argument combinations and the data patterns returned by each accessor.。
+The table below shows combinations of arguments and how each accessor behaves (identical to `success()`):
 
 | messageOrData  | data           | .ok     | .ng     | .message  | .data          |
 | -------------- | -------------- | ------- | ------- | --------- | -------------- |
@@ -99,29 +124,60 @@ The following is a list of argument combinations and the data patterns returned 
 
 ### `ok`: boolean / readonly
 
-Returns `true` if the instance was created by `Result.success()` and `false` if the instance was created by `Result.failure()`.
-
+Returns `true` if the instance was created by `Result.success()`, `false` if by `Result.failure()`.
 
 ### `ng`: boolean / readonly
 
-Returns `true` if the instance was created by `Result.failure()` and `false` if the instance was created by `Result.success()`.
+Returns the inverse of `ok`.
 
 ### `message`: string / readonly
 
-Returns the message passed to the constructor or the default message string.
-
-The default is `success` and `failure` respectively.
+Returns the message passed to the constructor or a default message. The default is `"success"` or `"failure"`.
 
 ### `data`: unknown / readonly
 
 Returns the data passed to the constructor.
 
-## Method
+## Instance Method
 
 ### `error()`: Error (experimental)
 
-Returns an Error object using `this.message`.
+Returns an `Error` object using `this.message`.
+This feature is experimental and may be modified or removed in the future.
 
-This implementation is currently experimental. It may be discontinued or the specifications may change in the future.
+## Class Method
 
+### `isSuccess(resultObject: Result<T, E>)`
 
+Returns whether the given `Result<T, E>` is in the success state (`ok: true`).
+
+This method is a type guard that narrows the type of the result to `Result<T, never>` upon success. This allows code completion and type checking for the `data` property and others.
+
+**Example:**
+
+```ts
+const result = Result.success({ token: 'abc123' });
+
+if (Result.isSuccess(result)) {
+  // Type of result: Result<{ token: string }, never>
+  console.log(result.data.token); // Completion and type checking are active
+}
+```
+
+### `isFailure(resultObject: Result<T, E>)`
+
+Returns whether the given `Result<T, E>` is in the failure state (`ok: false`).
+
+This method is a type guard that narrows the type of the result to `Result<never, E>` upon failure. This allows code completion and type checking for the `data` property and others.
+
+**Example:**
+
+```ts
+const result = Result.failure('Token expired', new Error('401 Unauthorized'));
+
+if (Result.isFailure(result)) {
+  // Type of result: Result<never, Error>
+  console.error(result.message);
+  console.error(result.data.message); // Inferred as Error
+}
+```

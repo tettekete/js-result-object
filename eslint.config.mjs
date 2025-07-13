@@ -31,6 +31,8 @@ const _base_rules = {
 	'@typescript-eslint/no-unused-vars': 'off',	// ditto
 	'no-dupe-class-members': 'off',			// overload methods are allowed in TypeScript
 	'@typescript-eslint/no-dupe-class-members': 'error', // correct 'no-dupe-class-members' setting in TypeScript
+	"no-redeclare": "off", // overload function are allowed in TypeScript
+	"@typescript-eslint/no-redeclare": ["error"] // correct 'no-redeclare' setting in TypeScript
 };
 
 
