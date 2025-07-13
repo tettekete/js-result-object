@@ -1,4 +1,6 @@
 
+<p align="center">English / <a href="https://tettekete.github.io/js-result-object/README.ja.html">日本語</a></p>
+
 # @tettekete/result
 
 `@tettekete/result` provides a class that represents simple "results".
