@@ -57,7 +57,7 @@ function resultMaker(
   which: "success" | "failure"
 ): Result<
   { prop1: string; prop2: string }, // <-- data type for success
-  { message: "failure" }            // <-- data type for failure
+  { message: string }               // <-- data type for failure
 > {
   if (which === "success") {
     return Result.success({ prop1: "prop1", prop2: "prop2" });
