@@ -56,8 +56,8 @@ console.log(`idToken: {r4.data.idToken}`);	// idToken: abc
 // バージョン 1.2.0 より、判別可能な共用型（discriminated unions）のような使用方法をサポートしています。
 function resultMaker( which: "success" | "failure" )
 	:Result<
-		{prop1: string, prop2: string},		// <-- 成功オブジェクトのための data プロパティーの型指定
-		{message: "failure"}				// <-- 失敗オブジェクトのための data プロパティーの型指定
+		{prop1: string, prop2: string},     // <-- 成功オブジェクトのための(data プロパティーの)型指定
+		{message: string}                   // <-- 失敗オブジェクトのための(data プロパティーの)型指定
 	>
 {
 	if( which === "success" )
